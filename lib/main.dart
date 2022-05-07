@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 void main() => runApp(const MyApp());
 
@@ -55,5 +58,22 @@ class Page2 extends StatelessWidget {
               Navigator.pop(context);
             },
             child: const Text("Return!")));
+  }
+}
+
+class Spell {
+  final String name;
+
+  const Spell({
+    required this.name,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {'name': name};
+  }
+
+  @override
+  String toString() {
+    return 'Spell{name: $name}';
   }
 }
