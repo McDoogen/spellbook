@@ -12,12 +12,64 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Spellbook Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Page1(),
+      home: const Page3(),
     );
+  }
+}
+
+class Page3 extends StatefulWidget {
+  const Page3({Key? key}) : super(key: key);
+
+  @override
+  State<Page3> createState() => _Page3State();
+}
+
+class _Page3State extends State<Page3> {
+  int _listState = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(title: const Text('Hello!')),
+        body: Center(child: Text('State: $_listState!')),
+        drawer: Drawer(
+            child: ListView(children: [
+          const DrawerHeader(child: Center(child: Text('Hello!'))),
+          ListTile(
+            leading: const Icon(Icons.arrow_right),
+            title: const Text('Cakes!'),
+            onTap: () {
+              _changeListState(1);
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.arrow_right),
+            title: const Text('Breads!'),
+            onTap: () {
+              _changeListState(2);
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.arrow_right),
+            title: const Text('Brazilian!'),
+            onTap: () {
+              _changeListState(3);
+              Navigator.pop(context);
+            },
+          )
+        ])));
+  }
+
+  void _changeListState(int number) {
+    setState(() {
+      _listState = number;
+    });
   }
 }
 
