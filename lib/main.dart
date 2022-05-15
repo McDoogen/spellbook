@@ -1,7 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:spellbook/spell_db.dart';
 
 void main() => runApp(const MyApp());
 
@@ -35,7 +33,15 @@ class _Page3State extends State<Page3> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text('Hello!')),
-        body: Center(child: Text('State: $_listState!')),
+        body: ListView(
+          children: [
+            for (int i = 0; i < _listState; i++)
+              const ListTile(
+                leading: Icon(Icons.abc),
+                title: TestWidget(),
+              ),
+          ],
+        ),
         drawer: Drawer(
             child: ListView(children: [
           const DrawerHeader(child: Center(child: Text('Hello!'))),
@@ -110,22 +116,5 @@ class Page2 extends StatelessWidget {
               Navigator.pop(context);
             },
             child: const Text("Return!")));
-  }
-}
-
-class Spell {
-  final String name;
-
-  const Spell({
-    required this.name,
-  });
-
-  Map<String, dynamic> toMap() {
-    return {'name': name};
-  }
-
-  @override
-  String toString() {
-    return 'Spell{name: $name}';
   }
 }
