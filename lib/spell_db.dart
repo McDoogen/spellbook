@@ -1,11 +1,10 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/widgets.dart';
-import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
 
 class Spell {
   final String name;
@@ -48,6 +47,12 @@ class SpellDatabaseHandler {
         name: maps[i]['name'],
       );
     });
+  }
+
+  Future<Spell> readFirstSpell() async {
+    final db = await initializeDB();
+    final List<Map<String, dynamic>> maps = await db.query('spell');
+    return maps.first['Cake'];
   }
 
   Future<void> updateSpell(Spell spell) async {
@@ -111,18 +116,18 @@ class _TestWidgetState extends State<TestWidget> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: FutureBuilder(
+      child: FutureBuilder<List<Spell>>(
         future: handler.readSpells(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return const Icon(Icons.heat_pump);
+            int randInt = Random().nextInt(snapshot.data!.length);
+            String dataName = snapshot.data![randInt].name;
+            return Text('Name: $dataName');
           } else if (snapshot.hasError) {
             return const Icon(Icons.error);
           } else {
             return const CircularProgressIndicator();
           }
-          // String dataName = snapshot.data!.name;
-          // return Text('Name: $dataName');
         },
       ),
     );

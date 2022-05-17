@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:spellbook/spell_db.dart';
+
+import 'package:spellbook/spell_db.dart';
 
 void main() => runApp(const MyApp());
 
@@ -38,7 +39,7 @@ class _Page3State extends State<Page3> {
             for (int i = 0; i < _listState; i++)
               const ListTile(
                 leading: Icon(Icons.abc),
-                title: Text('Test Text'),
+                title: TestWidget(),
               ),
           ],
         ),
