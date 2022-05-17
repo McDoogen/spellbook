@@ -1,19 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:spellbook/spell_db.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
-//TODO:DS: need to add this somewhere...
-Future<void> initializeFirebase() async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-}
-
-void main() {
-  initializeFirebase();
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);

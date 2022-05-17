@@ -38,6 +38,7 @@ dependencies:
   drift: ^1.6.0
   firebase_core: ^1.17.0
   firebase_database: ^9.0.14
+  cloud_firestore: ^3.1.15
 
 dev_dependencies:
   flutter_test:
