@@ -1,37 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:spellbook/recipe_db.dart';
 import 'package:provider/provider.dart';
+import 'package:spellbook/models/selected_category.dart';
 
 void main() => runApp(const RecipeBook());
-
-/**
- * Widget Structure
- * Recipebook - MaterialApp>Scaffold, stateless; root widget for entire project
- * RecipeCategoryList - Drawer, stateful?; contains selectable list of categories
- * RecipeListView - ListView, stateful; contains list of recipes to choose from
- * RecipeDetailView - Contains contents of a recipe
- * 
- * 
- * Editing?
- * Adding new?
- * 
- * 
- * Procedure:
- * Select a category and POP
- * Update List View based on category
- * Select Recipe from List View to navigate to Recipe
- */
-
-class RecipeInfo extends ChangeNotifier {
-  String selectedCategory = '';
-
-  String get categoryName => selectedCategory;
-
-  void selectCategory(String category) {
-    selectedCategory = category;
-    notifyListeners();
-  }
-}
 
 class RecipeBook extends StatelessWidget {
   const RecipeBook({Key? key}) : super(key: key);
@@ -44,11 +16,15 @@ class RecipeBook extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: ChangeNotifierProvider(
-          create: (context) => RecipeInfo(),
+          create: (context) => SelectedCategory(),
           child: Scaffold(
             appBar: AppBar(title: const Text('TEMPORARY APPBAR TITLE')),
             body: const RecipeListView(),
             drawer: const RecipeCategoryList(),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {},
+              child: const Icon(Icons.add),
+            ),
           ),
         ));
   }
@@ -81,16 +57,16 @@ class _RecipeCategoryListState extends State<RecipeCategoryList> {
             leading: const Icon(Icons.star),
             title: const Text('TEMPORARY TITLE 1'),
             onTap: () {
-              Provider.of<RecipeInfo>(context, listen: false)
-                  .selectCategory('Category 1');
+              Provider.of<SelectedCategory>(context, listen: false)
+                  .setCategory('Category 1');
               Navigator.pop(context);
             }),
         ListTile(
             leading: const Icon(Icons.star),
             title: const Text('TEMPORARY TITLE 2'),
             onTap: () {
-              Provider.of<RecipeInfo>(context, listen: false)
-                  .selectCategory('Category 2');
+              Provider.of<SelectedCategory>(context, listen: false)
+                  .setCategory('Category 2');
               Navigator.pop(context);
             }),
       ]),
@@ -111,8 +87,8 @@ class _RecipeListViewState extends State<RecipeListView> {
     return ListView(children: [
       ListTile(
           leading: const Icon(Icons.star),
-          title: Consumer<RecipeInfo>(builder: (context, info, child) {
-            return Text(info.categoryName);
+          title: Consumer<SelectedCategory>(builder: (context, info, child) {
+            return Text(info.getCategory());
           }),
           onTap: () {
             Navigator.push(
