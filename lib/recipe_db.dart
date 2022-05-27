@@ -31,7 +31,7 @@ class Recipe {
 class RecipeDatabaseHandler {
   Future<Database> initializeDB() async {
     //TODO:DS: DEBUGGING: Delete Database every time it is initialized
-    deleteDatabase(join(await getDatabasesPath(), 'spellbook.db'));
+    // deleteDatabase(join(await getDatabasesPath(), 'spellbook.db'));
     WidgetsFlutterBinding.ensureInitialized();
     return openDatabase(
       join(await getDatabasesPath(), 'spellbook.db'),
@@ -53,6 +53,27 @@ class RecipeDatabaseHandler {
     createRecipe(const Recipe(id: 1, title: 'Lemon Pie', category: 'Pie'));
     createRecipe(const Recipe(id: 1, title: 'Blueberry Pie', category: 'Pie'));
     createRecipe(const Recipe(id: 1, title: 'Egg Pie', category: 'Pie'));
+  }
+
+  Future<List<String>> getCategoryList() async {
+    final db = await initializeDB();
+    List<Map<String, dynamic>> query = await db.query(
+      'recipe',
+      distinct: true,
+      columns: ['category'],
+    );
+    return List.generate(query.length, (i) {
+      return query[i]['category'];
+    });
+  }
+
+  Future<List<String>> getRecipeList(String category) async {
+    final db = await initializeDB();
+    List<Map<String, dynamic>> query = await db.query('recipe',
+        columns: ['title'], where: 'category = ?', whereArgs: [category]);
+    return List.generate(query.length, (i) {
+      return query[i]['title'];
+    });
   }
 
   Future<void> createRecipe(Recipe recipe) async {

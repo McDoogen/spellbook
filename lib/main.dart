@@ -62,8 +62,6 @@ class RecipeCategoryList extends StatefulWidget {
 class _RecipeCategoryListState extends State<RecipeCategoryList> {
   late RecipeDatabaseHandler dbHandler;
 
-  final List<String> entries = <String>['A', 'B', 'C'];
-
   @override
   void initState() {
     super.initState();
@@ -71,45 +69,33 @@ class _RecipeCategoryListState extends State<RecipeCategoryList> {
     dbHandler.initializeDB().whenComplete(() async {
       setState(() {});
     });
-    //TODO:DS: Get Categories HERE, and set it to entries! Yes!
-    //TODO:DS: we will need to add a dbHandler.getCategoryList()
   }
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView.builder(
-        itemCount: entries.length,
-        itemBuilder: ((context, index) {
-          return ListTile(
-              title: Text("Category ${entries[index]}"),
-              onTap: () {
-                Provider.of<SelectedCategory>(context, listen: false)
-                    .setCategory(entries[index]);
-                Navigator.pop(context);
-              });
-        }),
-      ),
-      // child: ListView(children: [
-      //   const DrawerHeader(child: Text('TEMPORARY HEADER')),
-      //   ListTile(
-      //       leading: const Icon(Icons.star),
-      //       title: const Text('TEMPORARY TITLE 1'),
-      //       onTap: () {
-      //         Provider.of<SelectedCategory>(context, listen: false)
-      //             .setCategory('Category 1');
-      //         Navigator.pop(context);
-      //       }),
-      //   ListTile(
-      //       leading: const Icon(Icons.star),
-      //       title: const Text('TEMPORARY TITLE 2'),
-      //       onTap: () {
-      //         Provider.of<SelectedCategory>(context, listen: false)
-      //             .setCategory('Category 2');
-      //         Navigator.pop(context);
-      //       }),
-      // ]),
-    );
+        child: FutureBuilder<List<String>>(
+      future: dbHandler.getCategoryList(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const CircularProgressIndicator(); //TODO:DS: Is this correct?
+        } else if (snapshot.hasError) {
+          return const Text("There was an Error!"); //TODO:DS: Is this correct?
+        } else {
+          return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: ((context, index) {
+                return ListTile(
+                    title: Text(snapshot.data![index]),
+                    onTap: () {
+                      Provider.of<SelectedCategory>(context, listen: false)
+                          .setCategory(snapshot.data![index]);
+                      Navigator.pop(context);
+                    });
+              }));
+        }
+      },
+    ));
   }
 }
 
@@ -121,25 +107,33 @@ class RecipeListView extends StatefulWidget {
 }
 
 class _RecipeListViewState extends State<RecipeListView> {
+  late RecipeDatabaseHandler dbHandler;
+
+  @override
+  void initState() {
+    //TODO:DS: do we really need to do all this twice? Or is there a better way?
+    super.initState();
+    dbHandler = RecipeDatabaseHandler();
+    dbHandler.initializeDB().whenComplete(() async {
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView(children: [
-      ListTile(
-          leading: const Icon(Icons.star),
-          title: Consumer<SelectedCategory>(builder: (context, info, child) {
-            return Text(info.getCategory());
-          }),
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const RecipeDetailView()));
-          }),
-      ListTile(
-          leading: const Icon(Icons.star),
-          title: const Text('TEMPORARY TITLE 2'),
-          onTap: () {}),
-    ]);
+    return Consumer<SelectedCategory>(builder: ((context, value, child) {
+      return FutureBuilder<List<String>>(
+        future: dbHandler.getRecipeList(value.getCategory()),
+        builder: ((context, snapshot) {
+          return ListView.builder(
+            itemCount: snapshot.data?.length ?? 0,
+            itemBuilder: (context, index) {
+              return ListTile(title: Text(snapshot.data![index]));
+            },
+          );
+        }),
+      );
+    }));
   }
 }
 
