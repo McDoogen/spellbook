@@ -61,6 +61,9 @@ class RecipeCategoryList extends StatefulWidget {
 
 class _RecipeCategoryListState extends State<RecipeCategoryList> {
   late RecipeDatabaseHandler dbHandler;
+
+  final List<String> entries = <String>['A', 'B', 'C'];
+
   @override
   void initState() {
     super.initState();
@@ -68,30 +71,44 @@ class _RecipeCategoryListState extends State<RecipeCategoryList> {
     dbHandler.initializeDB().whenComplete(() async {
       setState(() {});
     });
+    //TODO:DS: Get Categories HERE, and set it to entries! Yes!
+    //TODO:DS: we will need to add a dbHandler.getCategoryList()
   }
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(children: [
-        const DrawerHeader(child: Text('TEMPORARY HEADER')),
-        ListTile(
-            leading: const Icon(Icons.star),
-            title: const Text('TEMPORARY TITLE 1'),
-            onTap: () {
-              Provider.of<SelectedCategory>(context, listen: false)
-                  .setCategory('Category 1');
-              Navigator.pop(context);
-            }),
-        ListTile(
-            leading: const Icon(Icons.star),
-            title: const Text('TEMPORARY TITLE 2'),
-            onTap: () {
-              Provider.of<SelectedCategory>(context, listen: false)
-                  .setCategory('Category 2');
-              Navigator.pop(context);
-            }),
-      ]),
+      child: ListView.builder(
+        itemCount: entries.length,
+        itemBuilder: ((context, index) {
+          return ListTile(
+              title: Text("Category ${entries[index]}"),
+              onTap: () {
+                Provider.of<SelectedCategory>(context, listen: false)
+                    .setCategory(entries[index]);
+                Navigator.pop(context);
+              });
+        }),
+      ),
+      // child: ListView(children: [
+      //   const DrawerHeader(child: Text('TEMPORARY HEADER')),
+      //   ListTile(
+      //       leading: const Icon(Icons.star),
+      //       title: const Text('TEMPORARY TITLE 1'),
+      //       onTap: () {
+      //         Provider.of<SelectedCategory>(context, listen: false)
+      //             .setCategory('Category 1');
+      //         Navigator.pop(context);
+      //       }),
+      //   ListTile(
+      //       leading: const Icon(Icons.star),
+      //       title: const Text('TEMPORARY TITLE 2'),
+      //       onTap: () {
+      //         Provider.of<SelectedCategory>(context, listen: false)
+      //             .setCategory('Category 2');
+      //         Navigator.pop(context);
+      //       }),
+      // ]),
     );
   }
 }
