@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -9,33 +10,49 @@ import 'package:flutter/widgets.dart';
 class Recipe {
   final int id;
   final String title;
+  final String category;
 
   const Recipe({
     required this.id,
     required this.title,
+    required this.category,
   });
 
   Map<String, dynamic> toMap() {
-    return {'id': id, 'title': title};
+    return {'id': id, 'title': title, 'category': category};
   }
 
   @override
   String toString() {
-    return 'Spell{id: $id, title: $title}';
+    return 'Spell{id: $id, title: $title, category: $category}';
   }
 }
 
 class RecipeDatabaseHandler {
   Future<Database> initializeDB() async {
+    //TODO:DS: DEBUGGING: Delete Database every time it is initialized
+    deleteDatabase(join(await getDatabasesPath(), 'spellbook.db'));
     WidgetsFlutterBinding.ensureInitialized();
     return openDatabase(
       join(await getDatabasesPath(), 'spellbook.db'),
       onCreate: (db, version) {
-        db.execute('CREATE TABLE recipe(id int, title Text)');
+        db.execute('CREATE TABLE recipe(id int, title Text, category Text)');
         //TODO:DS: Create other tables here too!
       },
       version: 1,
     );
+  }
+
+  Future<void> tests() async {
+    createRecipe(
+        const Recipe(id: 0, title: 'Strawberry Cake', category: 'Cake'));
+    createRecipe(const Recipe(id: 1, title: 'Lemon Cake', category: 'Cake'));
+    createRecipe(
+        const Recipe(id: 1, title: 'Chocolate Cake', category: 'Cake'));
+
+    createRecipe(const Recipe(id: 1, title: 'Lemon Pie', category: 'Pie'));
+    createRecipe(const Recipe(id: 1, title: 'Blueberry Pie', category: 'Pie'));
+    createRecipe(const Recipe(id: 1, title: 'Egg Pie', category: 'Pie'));
   }
 
   Future<void> createRecipe(Recipe recipe) async {
@@ -52,7 +69,10 @@ class RecipeDatabaseHandler {
     final db = await initializeDB();
     final List<Map<String, dynamic>> maps = await db.query('recipe');
     return List.generate(maps.length, (i) {
-      return Recipe(id: maps[i]['id'], title: maps[i]['title']);
+      return Recipe(
+          id: maps[i]['id'],
+          title: maps[i]['title'],
+          category: maps[i]['category']);
     });
   }
 
@@ -61,7 +81,10 @@ class RecipeDatabaseHandler {
     final db = await initializeDB();
     List<Map<String, dynamic>> recipeMap = await db
         .query('recipe', columns: null, where: 'id = ?', whereArgs: [id]);
-    return Recipe(id: recipeMap[0]['id'], title: recipeMap[0]['title']);
+    return Recipe(
+        id: recipeMap[0]['id'],
+        title: recipeMap[0]['title'],
+        category: recipeMap[0]['category']);
   }
 
   Future<void> updateRecipe(Recipe recipe) async {

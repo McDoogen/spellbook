@@ -18,15 +18,37 @@ class RecipeBook extends StatelessWidget {
         home: ChangeNotifierProvider(
           create: (context) => SelectedCategory(),
           child: Scaffold(
-            appBar: AppBar(title: const Text('TEMPORARY APPBAR TITLE')),
-            body: const RecipeListView(),
-            drawer: const RecipeCategoryList(),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {},
-              child: const Icon(Icons.add),
-            ),
-          ),
+              appBar: AppBar(title: const Text('TEMPORARY APPBAR TITLE')),
+              body: const RecipeListView(),
+              drawer: const RecipeCategoryList(),
+              floatingActionButton: const TestRecipeAdder()),
         ));
+  }
+}
+
+class TestRecipeAdder extends StatefulWidget {
+  const TestRecipeAdder({Key? key}) : super(key: key);
+
+  @override
+  State<TestRecipeAdder> createState() => _TestRecipeAdderState();
+}
+
+class _TestRecipeAdderState extends State<TestRecipeAdder> {
+  late RecipeDatabaseHandler dbHandler;
+
+  @override
+  void initState() {
+    super.initState();
+    dbHandler = RecipeDatabaseHandler();
+    dbHandler.initializeDB().whenComplete(() async {
+      setState(() {});
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+        onPressed: dbHandler.tests, child: const Icon(Icons.add));
   }
 }
 
