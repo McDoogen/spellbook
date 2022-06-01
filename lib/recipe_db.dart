@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -45,14 +44,14 @@ class RecipeDatabaseHandler {
 
   Future<void> tests() async {
     createRecipe(
-        const Recipe(id: 0, title: 'Strawberry Cake', category: 'Cake'));
+        const Recipe(id: 6, title: 'Strawberry Cake', category: 'Cake'));
     createRecipe(const Recipe(id: 1, title: 'Lemon Cake', category: 'Cake'));
     createRecipe(
-        const Recipe(id: 1, title: 'Chocolate Cake', category: 'Cake'));
+        const Recipe(id: 2, title: 'Chocolate Cake', category: 'Cake'));
 
-    createRecipe(const Recipe(id: 1, title: 'Lemon Pie', category: 'Pie'));
-    createRecipe(const Recipe(id: 1, title: 'Blueberry Pie', category: 'Pie'));
-    createRecipe(const Recipe(id: 1, title: 'Egg Pie', category: 'Pie'));
+    createRecipe(const Recipe(id: 3, title: 'Lemon Pie', category: 'Pie'));
+    createRecipe(const Recipe(id: 4, title: 'Blueberry Pie', category: 'Pie'));
+    createRecipe(const Recipe(id: 5, title: 'Egg Pie', category: 'Pie'));
   }
 
   Future<List<String>> getCategoryList() async {
@@ -86,9 +85,10 @@ class RecipeDatabaseHandler {
   }
 
   //TODO:DS: will we need this?
-  Future<List<Recipe>> readRecipes(int id) async {
+  Future<List<Recipe>> readRecipes(String category) async {
     final db = await initializeDB();
-    final List<Map<String, dynamic>> maps = await db.query('recipe');
+    final List<Map<String, dynamic>> maps =
+        await db.query('recipe', where: 'category = ?', whereArgs: [category]);
     return List.generate(maps.length, (i) {
       return Recipe(
           id: maps[i]['id'],

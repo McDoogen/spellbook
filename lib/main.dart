@@ -3,6 +3,10 @@ import 'package:spellbook/recipe_db.dart';
 import 'package:provider/provider.dart';
 import 'package:spellbook/models/selected_category.dart';
 
+//TODO:DS:
+// 1. Can I switch theses widgets to stateless?
+// 2. How do I use the widget test thing?
+
 void main() => runApp(const RecipeBook());
 
 class RecipeBook extends StatelessWidget {
@@ -15,8 +19,10 @@ class RecipeBook extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: ChangeNotifierProvider(
-          create: (context) => SelectedCategory(),
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: ((context) => SelectedCategory())),
+          ],
           child: Scaffold(
               appBar: AppBar(title: const Text('TEMPORARY APPBAR TITLE')),
               body: const RecipeListView(),
@@ -122,13 +128,21 @@ class _RecipeListViewState extends State<RecipeListView> {
   @override
   Widget build(BuildContext context) {
     return Consumer<SelectedCategory>(builder: ((context, value, child) {
-      return FutureBuilder<List<String>>(
-        future: dbHandler.getRecipeList(value.getCategory()),
+      return FutureBuilder<List<Recipe>>(
+        future: dbHandler.readRecipes(value.getCategory()),
         builder: ((context, snapshot) {
           return ListView.builder(
             itemCount: snapshot.data?.length ?? 0,
             itemBuilder: (context, index) {
-              return ListTile(title: Text(snapshot.data![index]));
+              return ListTile(
+                  title: Text(snapshot.data![index].title),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RecipeDetailView(
+                                recipeId: snapshot.data![index].id)));
+                  });
             },
           );
         }),
@@ -138,21 +152,40 @@ class _RecipeListViewState extends State<RecipeListView> {
 }
 
 class RecipeDetailView extends StatefulWidget {
-  const RecipeDetailView({Key? key}) : super(key: key);
+  const RecipeDetailView({Key? key, this.recipeId = 1}) : super(key: key);
+
+  final int recipeId;
 
   @override
   State<RecipeDetailView> createState() => _RecipeDetailViewState();
 }
 
 class _RecipeDetailViewState extends State<RecipeDetailView> {
+  late RecipeDatabaseHandler dbHandler;
+
+  @override
+  void initState() {
+    //TODO:DS: do we really need to do all this twice? Or is there a better way?
+    super.initState();
+    dbHandler = RecipeDatabaseHandler();
+    dbHandler.initializeDB().whenComplete(() async {
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('TEMPORARY BUTTON')),
-    );
+    return FutureBuilder<Recipe>(
+        future: dbHandler.readRecipe(
+            widget.recipeId), //TODO:DS: how to handle recipeId not found?
+        builder: ((context, snapshot) {
+          if (snapshot.hasData) {
+            return Scaffold(
+                appBar: AppBar(title: Text(snapshot.data!.title)),
+                body: const Center(child: Icon(Icons.cake, size: 200)));
+          } else {
+            return const Center(child: Icon(Icons.question_mark, size: 200));
+          }
+        }));
   }
 }
