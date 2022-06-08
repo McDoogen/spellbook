@@ -15,34 +15,40 @@ class RecipeBook extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Recipe Book',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider(create: ((context) => SelectedCategory())),
-          ],
-          child: Scaffold(
-              appBar: AppBar(title: const Text('TEMPORARY APPBAR TITLE')),
-              body: const RecipeListView(),
-              drawer: const RecipeCategoryList(),
-              floatingActionButton: const RecipeCreatorButton()),
-        ));
+      title: 'Recipe Book',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const RecipeBookHome(),
+        '/creator': (context) => const RecipeCreator(),
+        '/creator/Page1': (context) => const Page1(),
+        '/creator/Page2': (context) => const Page2()
+      },
+    );
   }
 }
 
-class RecipeCreatorButton extends StatelessWidget {
-  const RecipeCreatorButton({Key? key}) : super(key: key);
+class RecipeBookHome extends StatelessWidget {
+  const RecipeBookHome({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const RecipeCreator()));
-        },
-        child: const Icon(Icons.plus_one));
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: ((context) => SelectedCategory())),
+        ],
+        child: Scaffold(
+            appBar: AppBar(title: const Text('TEMPORARY APPBAR TITLE')),
+            body: const RecipeListView(),
+            drawer: const RecipeCategoryList(),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/creator');
+              },
+              child: const Icon(Icons.numbers),
+            )));
   }
 }
 
@@ -82,9 +88,45 @@ class RecipeCreator extends StatelessWidget {
           title: const Text('TEMP RECIPE CREATE'),
         ),
         body: Center(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [Text('ok'), Icon(Icons.abc)],
+            child: ElevatedButton(
+          child: const Icon(Icons.hail),
+          onPressed: () {
+            Navigator.pushNamed(context, '/creator/Page1');
+          },
+        )));
+  }
+}
+
+class Page1 extends StatelessWidget {
+  const Page1({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(title: const Text('Page 1')),
+        body: Center(
+            child: ElevatedButton(
+          child: const Icon(Icons.fire_extinguisher),
+          onPressed: () {
+            Navigator.pushNamed(context, '/creator/Page2');
+          },
+        )));
+  }
+}
+
+class Page2 extends StatelessWidget {
+  const Page2({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(title: const Text('Page 2')),
+        body: Center(
+            child: ElevatedButton(
+          child: const Icon(Icons.waterfall_chart),
+          onPressed: () {
+            Navigator.popUntil(context, ModalRoute.withName('/'));
+          },
         )));
   }
 }
