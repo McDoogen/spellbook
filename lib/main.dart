@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spellbook/recipe_db.dart';
+import 'package:spellbook/utils/recipe_db.dart';
 import 'package:provider/provider.dart';
 import 'package:spellbook/models/selected_category.dart';
 
@@ -27,8 +27,22 @@ class RecipeBook extends StatelessWidget {
               appBar: AppBar(title: const Text('TEMPORARY APPBAR TITLE')),
               body: const RecipeListView(),
               drawer: const RecipeCategoryList(),
-              floatingActionButton: const TestRecipeAdder()),
+              floatingActionButton: const RecipeCreatorButton()),
         ));
+  }
+}
+
+class RecipeCreatorButton extends StatelessWidget {
+  const RecipeCreatorButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const RecipeCreator()));
+        },
+        child: const Icon(Icons.plus_one));
   }
 }
 
@@ -55,6 +69,23 @@ class _TestRecipeAdderState extends State<TestRecipeAdder> {
   Widget build(BuildContext context) {
     return FloatingActionButton(
         onPressed: dbHandler.tests, child: const Icon(Icons.add));
+  }
+}
+
+class RecipeCreator extends StatelessWidget {
+  const RecipeCreator({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('TEMP RECIPE CREATE'),
+        ),
+        body: Center(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [Text('ok'), Icon(Icons.abc)],
+        )));
   }
 }
 
@@ -181,6 +212,15 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
         builder: ((context, snapshot) {
           if (snapshot.hasData) {
             return Scaffold(
+                //TODO:DS: So what does the Recipe Contain?
+                // Title
+                // Category
+                // List of Ingredients (Table of Ingredients, match by Recipe ID)
+                //  //  Ingredient Text, Ingredient Order, Recipe ID
+                //  //  Future: separate Ingredient Name, Quantity, and Unit
+                // List of Steps to Make it (Table of Process, match by Recipe ID)
+                //  //  Step Text, Step Order, Recipe ID
+                // Edit Button (Make sure the button doesn't block any view)
                 appBar: AppBar(title: Text(snapshot.data!.title)),
                 body: const Center(child: Icon(Icons.cake, size: 200)));
           } else {

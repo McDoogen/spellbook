@@ -36,6 +36,10 @@ class RecipeDatabaseHandler {
       join(await getDatabasesPath(), 'spellbook.db'),
       onCreate: (db, version) {
         db.execute('CREATE TABLE recipe(id int, title Text, category Text)');
+        db.execute(
+            'CREATE TABLE ingredient(id int, itemOrder int, description Text)');
+        db.execute(
+            'CREATE TABLE process(id int, itemOrder int, description Text)');
         //TODO:DS: Create other tables here too!
       },
       version: 1,
