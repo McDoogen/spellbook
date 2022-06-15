@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:spellbook/recipe_db.dart';
+import 'package:spellbook/old/recipe_db.dart';
 import 'package:provider/provider.dart';
-import 'package:spellbook/selected_category.dart';
+import 'package:spellbook/old/selected_category.dart';
 
 //TODO:DS:
 // 1. Can I switch theses widgets to stateless?

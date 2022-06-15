@@ -7,15 +7,17 @@
     - iOS
 
     ~~~ Project Architecture ~~~
-    - Folder-by-layer for simplicity
+    - Reference -> Minimalist, https://suragch.medium.com/flutter-state-management-for-minimalists-4c71a2f2f0c1
+    - Folder-by-feature
     - Provider for state management
     - Flutter Navigation 1.0, push/pop for simple routing
-    - Layers: View, Model View, Services
+    - Layers: Page, State Management, Services
 
-    ~~~ Project Views ~~~
-    - Recipe Detail View
-    - Recipe Creator View
-    - Recipe Editor View
+    ~~~ Project Pages ~~~
+    - Recipe Detail Page
+    - Recipe Creator Page
+    - Recipe Editor Page
+    - Recipe Navigator Page
 
     ~~~ Project Models ~~~
     - Recipe: Title, Category, Ingredient List, Process List
@@ -26,6 +28,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:spellbook/pages/recipe_navigator.dart';
 
 void main() => runApp(const HelloWidget());
 
@@ -37,7 +40,6 @@ class HelloWidget extends StatelessWidget {
     return MaterialApp(
         title: 'Hello!',
         theme: ThemeData(primarySwatch: Colors.blue),
-        home: Scaffold(
-            appBar: AppBar(), body: const Center(child: Text('Hello! :)'))));
+        home: const RecipeNavigatorPage());
   }
 }
