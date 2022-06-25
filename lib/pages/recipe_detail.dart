@@ -1,19 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:spellbook/models/selected_recipe.dart';
 import 'package:spellbook/pages/recipe_editor.dart';
 import 'package:spellbook/models/recipe_model.dart';
-
-/**
- * ~~~ Page Objectives ~~~
- * > Show Details of a Recipe Object
- * > Have a button to navigate to the Recipe Editor Page
- * > Have a button to return to the Recipe Navigator Page
- * 
- * 
- * ~~~ State Variables ~~~
- * > Recipe Object
- */
 
 class RecipeDetailPage extends StatelessWidget {
   const RecipeDetailPage({Key? key, required this.recipe}) : super(key: key);
@@ -28,9 +15,40 @@ class RecipeDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String recipeTitle = recipe.title;
+    String recipeCategory = recipe.category;
+    List<String> recipeIngredients = recipe.ingredients;
+    List<String> recipeProcess = recipe.processes;
+    final listItemCount = recipeIngredients.length + recipeProcess.length + 2;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Recipe Detail Page')),
-      body: Center(child: Text('Name: $recipeTitle')),
+      appBar: AppBar(title: Text('$recipeTitle : $recipeCategory')),
+      body: ListView.builder(
+        itemCount: listItemCount,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return const ListTile(
+              title: Center(
+                child: Text('Ingredients'),
+              ),
+              tileColor: Colors.red,
+            );
+          } else if (index <= recipeIngredients.length) {
+            final ingredientText = recipeIngredients[index - 1];
+            return ListTile(
+              title: Text(ingredientText),
+            );
+          } else if (index == recipeIngredients.length + 1) {
+            return const ListTile(
+              title: Center(child: Text('Process')),
+              tileColor: Colors.red,
+            );
+          } else {
+            final relativeIndex = index - 2 - recipeIngredients.length;
+            final processText = recipeProcess[relativeIndex];
+            return ListTile(title: Text('${relativeIndex + 1}. $processText'));
+          }
+        },
+      ),
       floatingActionButton: FloatingActionButton(
           onPressed: () => _navigateToEditor(context),
           child: const Icon(Icons.edit)),

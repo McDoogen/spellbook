@@ -10,10 +10,26 @@ class RecipeNavigatorPage extends StatelessWidget {
 
   final Recipe testRecipeA = const Recipe(
       id: 1,
-      title: 'Carrot Cake',
-      category: 'Cake',
-      processes: ['Mix Everything', 'Preheat the Oven', 'Bake it', 'Eat it!'],
-      ingredients: ['1 egg', '24g Carrots', '1 tsp Flour']);
+      title: 'Drop Biscuits',
+      category: 'Breakfast',
+      processes: [
+        'Preheat oven to 425 F',
+        'Mix dry',
+        'Cut butter into flour mix using pastry blender',
+        'Add milk',
+        'Quickly and briefly mix together',
+        'Scoop out biscuits by hand and plop them onto baking sheet',
+        'For added Pazzaz, add kosher salt to pan before plopping biscuits',
+        'Bake until tips start to brown, then turn off the oven and make coffee!'
+      ],
+      ingredients: [
+        '120g AP Flour',
+        '1/2 tsp Salt',
+        '1 tsp Baking Powder',
+        '1.5 tsp Sugar',
+        '30g Butter',
+        '90g Milk'
+      ]);
 
   final Recipe testRecipeB = const Recipe(
       id: 1,
