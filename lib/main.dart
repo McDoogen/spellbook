@@ -2,9 +2,16 @@
     ~~~ Project Description ~~~
     A collection of recipes that can be viewed, added, removed, and edited by the user
 
-    ~~~ Proejct Platforms ~~~
+    ~~~ Project Platforms ~~~
     - Android
     - iOS
+
+    ~~~ Order of Design ~~~
+    - Project Purpose
+    - Models
+    - Pages
+    - Logic
+    - Services
 
     ~~~ Project Architecture ~~~
     - Reference -> Minimalist, https://suragch.medium.com/flutter-state-management-for-minimalists-4c71a2f2f0c1

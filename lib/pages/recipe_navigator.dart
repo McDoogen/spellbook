@@ -4,6 +4,7 @@ import 'package:spellbook/models/selected_recipe.dart';
 import 'package:spellbook/pages/recipe_creator.dart';
 import 'package:spellbook/pages/recipe_detail.dart';
 import 'package:spellbook/models/recipe_model.dart';
+import 'package:spellbook/services/recipe_storage_service.dart';
 
 class RecipeNavigatorPage extends StatelessWidget {
   const RecipeNavigatorPage({Key? key}) : super(key: key);
@@ -38,16 +39,31 @@ class RecipeNavigatorPage extends StatelessWidget {
       processes: ['Mix Wet', 'Mix Dry', 'Freeze it', 'Make a wish', 'Enjoy!'],
       ingredients: ['2 kg Orange, peeled', 'A Cake', 'Super Glue']);
 
-  void _navigateToCreator(context) {
+  void _navigateToCreator(context) async {
+    RecipeStorageService recipeStorageService = RecipeStorageService();
+    await recipeStorageService.deleteRecipe(1);
+    await recipeStorageService.deleteRecipe(2);
+    await recipeStorageService.addRecipe(testRecipeA.title,
+        testRecipeA.category, testRecipeA.ingredients, testRecipeA.processes);
+    await recipeStorageService.addRecipe(testRecipeB.title,
+        testRecipeB.category, testRecipeB.ingredients, testRecipeB.processes);
+
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => const RecipeCreatorPage()));
   }
 
-  void _navigateToDetail(context, recipe) {
+  void _navigateToDetail(context, recipeId) async {
+    RecipeStorageService recipeStorageService = RecipeStorageService();
+    Recipe recipe = await recipeStorageService.getRecipe(recipeId);
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => RecipeDetailPage(recipe: recipe)));
+  }
+
+  Future<List<Recipe>> recipeListBuilder() async {
+    RecipeStorageService recipeStorageService = RecipeStorageService();
+    return recipeStorageService.getRecipes();
   }
 
   @override
@@ -58,15 +74,25 @@ class RecipeNavigatorPage extends StatelessWidget {
         ],
         child: Scaffold(
           appBar: AppBar(title: const Text('Recipe Navigator Page!')),
-          body: ListView(
-            children: [
-              ListTile(
-                  title: const Text('A'),
-                  onTap: () => _navigateToDetail(context, testRecipeA)),
-              ListTile(
-                  title: const Text('B'),
-                  onTap: () => _navigateToDetail(context, testRecipeB))
-            ],
+          body: FutureBuilder<List<Recipe>>(
+            future: recipeListBuilder(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data != null) {
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    Recipe thisRecipe = snapshot.data![index];
+                    return ListTile(
+                        title: Text(thisRecipe.title),
+                        onTap: () => _navigateToDetail(context, thisRecipe.id));
+                  },
+                );
+              } else if (snapshot.hasError) {
+                return const Text('There was an Error!');
+              } else {
+                return const CircularProgressIndicator();
+              }
+            },
           ),
           floatingActionButton: FloatingActionButton(
               onPressed: () => _navigateToCreator(context),
