@@ -24,6 +24,17 @@ import 'package:path_provider/path_provider.dart';
 /// Text
 
 class RecipeStorageService {
+  static final RecipeStorageService _instance =
+      RecipeStorageService._internal();
+
+  factory RecipeStorageService() {
+    return _instance;
+  }
+
+  RecipeStorageService._internal() {
+    print('created');
+  }
+
   Future<Recipe> getRecipe(int recipeId) async {
     Database db = await DatabaseHelper().database;
     List<Map<dynamic, dynamic>> recipeDetail = await db.query(

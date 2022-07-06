@@ -17,11 +17,12 @@ class RecipeNavigatorPage extends StatelessWidget {
         MaterialPageRoute(builder: (context) => const RecipeCreatorPage()));
   }
 
-  void _navigateToDetail(context, recipe) async {
+  void _navigateToDetail(context, Recipe recipe) async {
+    Recipe fullRecipe = await recipeStorageService.getRecipe(recipe.id);
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => RecipeDetailPage(recipe: recipe)));
+            builder: (context) => RecipeDetailPage(recipe: fullRecipe)));
   }
 
   Future<List<Recipe>> recipeListBuilder() async {
